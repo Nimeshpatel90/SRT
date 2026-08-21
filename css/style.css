@@ -101,3 +101,11 @@ footer{padding:28px 16px;text-align:center;color:#738094;font-size:12px}
 .filters>*{flex:1;min-width:150px}
 @media(max-width:950px){.topbar{height:auto;min-height:72px;padding:10px 16px;gap:10px}.topbar nav{justify-content:flex-end}.page-head{align-items:flex-start;flex-direction:column}.kpis{grid-template-columns:repeat(2,1fr)}.hero-modern{grid-template-columns:1fr}.notice{grid-template-columns:1fr}}
 @media(max-width:600px){.topbar{align-items:flex-start;flex-direction:column}.topbar nav{width:100%;justify-content:flex-start;overflow:auto;flex-wrap:nowrap}.topbar nav a{white-space:nowrap}.page-shell,.home-shell{width:min(100% - 22px,1400px);padding:30px 0 45px}.brand img{width:44px;height:44px}.page-head h1{font-size:38px}.kpis{grid-template-columns:1fr 1fr;gap:10px}.kpi{padding:16px}.kpi strong{font-size:24px}.section-heading{padding:20px 17px 14px;align-items:flex-start;flex-direction:column}.status-line{padding:0 17px 14px}.feature-grid,.service-grid{grid-template-columns:1fr}.hero-modern{padding:25px 0}.hero-copy h1{font-size:48px;letter-spacing:-2px}}
+
+/* SRT logo — enlarged to approximately double the previous header size */
+.srt-brand img {
+    width: 104px;
+    height: 104px;
+    object-fit: contain;
+    display: block;
+}

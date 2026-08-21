@@ -29,15 +29,47 @@ function populateTypes(rows){
  fillSelect('driverFilter','drivers',rows.map(r=>val(r,'DRIVER')));
  fillSelect('vehicleFilter','vehicles',rows.map(r=>val(r,'CAR','VEHICLE')));
 }
-function render(){const q=document.getElementById('searchBox').value.toLowerCase().trim(), type=document.getElementById('typeFilter').value, driver=document.getElementById('driverFilter').value, vehicle=document.getElementById('vehicleFilter').value, date=document.getElementById('dateFilter').value;
-const rows=allRows.filter(r=>{
- const text=Object.values(r).join(' ').toLowerCase();
- const d=String(val(r,'Start Date')).trim();
- const iso=d.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
- const normalized=iso?`${iso[3]}-${iso[2]}-${iso[1]}`:d;
- return(!q||text.includes(q))&&(!type||val(r,'TRIP TYPE')===type)&&(!driver||val(r,'DRIVER')===driver)&&(!vehicle||val(r,'CAR','VEHICLE')===vehicle)&&(!date||normalized===date)
-}); const body=document.getElementById('ktcBody'); if(!rows.length){body.innerHTML='<tr><td colspan="16" class="empty">No matching KTC trips found.</td></tr>';return} body.innerHTML=rows.map(r=>`<tr><td>${val(r,'Start Date')}</td><td>${val(r,'Start Time')}</td><td>${val(r,'KTC Rq Num','REQUEST')}</td><td>${val(r,'GUEST COMPANY')}</td><td>${val(r,'GUEST MOBILE')}</td><td><span class="type-chip">${val(r,'TRIP TYPE')}</span></td><td>${val(r,'CAR','VEHICLE')}</td><td>${val(r,'DRIVER')}</td><td>${val(r,'End Date')}</td><td>${val(r,'End Time')}</td><td>${val(r,'Start KM')}</td><td>${val(r,'End KM')}</td><td><b>${val(r,'Actual KM')}</b></td><td>${money(val(r,'Toll'))}</td><td>${money(val(r,'Parking'))}</td><td class="desc">${val(r,'Trip Description','DESCRIPTION')}</td></tr>`).join('');}
-async function loadKTCTrips(){const btn=document.getElementById('refreshBtn');btn.disabled=true;btn.textContent='↻ Loading…'; try{const response=await fetch(API_URL+'?view=corporate&partner=KTC&t='+Date.now(),{cache:'no-store'});const data=await response.json();if(data.error)throw new Error(data.error);allRows=Array.isArray(data.trips)?data.trips:[];let km=0,toll=0,parking=0;allRows.forEach(r=>{km+=num(r['Actual KM']);toll+=num(r['Toll']);parking+=num(r['Parking'])});document.getElementById('cTrips').textContent=allRows.length.toLocaleString('en-IN');document.getElementById('cKm').textContent=km.toLocaleString('en-IN');document.getElementById('cToll').textContent=money(toll);document.getElementById('cParking').textContent=money(parking);populateTypes(allRows);render();document.getElementById('lastUpdated').textContent='Updated '+new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});}catch(e){document.getElementById('ktcBody').innerHTML=`<tr><td colspan="16" class="empty error">Unable to load KTC trips: ${e.message}</td></tr>`}finally{btn.disabled=false;btn.textContent='↻ Refresh'}}
+function render(){
+ const q=document.getElementById('searchBox').value.toLowerCase().trim();
+ const type=document.getElementById('typeFilter').value;
+ const driver=document.getElementById('driverFilter').value;
+ const vehicle=document.getElementById('vehicleFilter').value;
+ const date=document.getElementById('dateFilter').value;
+
+ const rows=allRows.filter(r=>{
+  const text=Object.values(r).join(' ').toLowerCase();
+  const d=String(val(r,'Start Date')).trim();
+  const iso=d.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+  const normalized=iso?`${iso[3]}-${iso[2]}-${iso[1]}`:d;
+  return (!q||text.includes(q)) &&
+         (!type||val(r,'TRIP TYPE')===type) &&
+         (!driver||val(r,'DRIVER')===driver) &&
+         (!vehicle||val(r,'CAR','VEHICLE')===vehicle) &&
+         (!date||normalized===date);
+ });
+
+ // KPI tiles are calculated from the CURRENT filtered/search result, not allRows.
+ let km=0, toll=0, parking=0;
+ rows.forEach(r=>{
+  km += num(r['Actual KM']);
+  toll += num(r['Toll']);
+  parking += num(r['Parking']);
+ });
+
+ document.getElementById('cTrips').textContent=rows.length.toLocaleString('en-IN');
+ document.getElementById('cKm').textContent=km.toLocaleString('en-IN');
+ document.getElementById('cToll').textContent=money(toll);
+ document.getElementById('cParking').textContent=money(parking);
+
+ const body=document.getElementById('ktcBody');
+ if(!rows.length){
+  body.innerHTML='<tr><td colspan="16" class="empty">No matching KTC trips found.</td></tr>';
+  return;
+ }
+
+ body.innerHTML=rows.map(r=>`<tr><td>${val(r,'Start Date')}</td><td>${val(r,'Start Time')}</td><td>${val(r,'KTC Rq Num','REQUEST')}</td><td>${val(r,'GUEST COMPANY')}</td><td>${val(r,'GUEST MOBILE')}</td><td><span class="type-chip">${val(r,'TRIP TYPE')}</span></td><td>${val(r,'CAR','VEHICLE')}</td><td>${val(r,'DRIVER')}</td><td>${val(r,'End Date')}</td><td>${val(r,'End Time')}</td><td>${val(r,'Start KM')}</td><td>${val(r,'End KM')}</td><td><b>${val(r,'Actual KM')}</b></td><td>${money(val(r,'Toll'))}</td><td>${money(val(r,'Parking'))}</td><td class="desc">${val(r,'Trip Description','DESCRIPTION')}</td></tr>`).join('');
+}
+async function loadKTCTrips(){const btn=document.getElementById('refreshBtn');btn.disabled=true;btn.textContent='↻ Loading…'; try{const response=await fetch(API_URL+'?view=corporate&partner=KTC&t='+Date.now(),{cache:'no-store'});const data=await response.json();if(data.error)throw new Error(data.error);allRows=Array.isArray(data.trips)?data.trips:[];populateTypes(allRows);render();document.getElementById('lastUpdated').textContent='Updated '+new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});}catch(e){document.getElementById('ktcBody').innerHTML=`<tr><td colspan="16" class="empty error">Unable to load KTC trips: ${e.message}</td></tr>`}finally{btn.disabled=false;btn.textContent='↻ Refresh'}}
 document.getElementById('searchBox').addEventListener('input',render);
 document.getElementById('typeFilter').addEventListener('change',render);
 document.getElementById('driverFilter').addEventListener('change',render);
