@@ -1,63 +1,61 @@
-const SPREADSHEET_ID = '13TQ-pX_dWd9dgl8dcMlC9mfSNGf6euaHELXg7tDO6Ng';
-const SHEET_NAME = 'TRIP DETAILS';
+const SPREADSHEET_ID="13TQ-pX_dWd9dgl8dcMlC9mfSNGf6euaHELXg7tDO6Ng";
+const SHEET_NAME="TRIP DETAILS";
 
-function doGet(e) {
-  const view = (e && e.parameter && e.parameter.view) || 'all';
-  const company = ((e && e.parameter && e.parameter.company) || '').trim().toLowerCase();
+function doGet(){
+  const sh=SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName(SHEET_NAME);
+  if(!sh)return json({error:"TRIP DETAILS sheet not found"});
+  const lastRow=sh.getLastRow(), lastCol=sh.getLastColumn();
+  if(lastRow<3)return json({company:"KTC",totalTrips:0,trips:[]});
 
-  const sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName(SHEET_NAME);
-  if (!sheet) return json({error:'Sheet not found: ' + SHEET_NAME});
-
-  const values = sheet.getDataRange().getValues();
-  if (!values.length) return json(view === 'company' ? {companyName: company, trips: []} : []);
-
-  const headers = values.shift().map(String);
-  const data = values.map(row => {
-    const o = {};
-    headers.forEach((h,i) => {
-      o[h] = row[i] instanceof Date ? row[i].toISOString() : row[i];
-    });
-    return o;
+  const h=sh.getRange(1,1,2,lastCol).getDisplayValues();
+  const headers=h[0].map((a,i)=>{
+    const b=String(h[1][i]||"").trim(), a1=String(a||"").trim();
+    return (a1&&b?(a1+" "+b):a1||b).replace(/\s+/g," ").trim();
   });
 
-  if (view === 'company') {
-    const companyIdField = headers.find(h => h.toLowerCase() === 'company id');
-    const companyNameField = headers.find(h => h.toLowerCase() === 'company name');
+  const rows=sh.getRange(3,1,lastRow-2,lastCol).getDisplayValues()
+    .filter(r=>r.some(v=>String(v).trim()!==""));
 
-    if (!companyIdField) {
-      return json({
-        error: 'Company ID column not found. Add a column named "Company ID" to TRIP DETAILS.'
-      });
+  const trips=rows.map(r=>{
+    const o={}; headers.forEach((h,i)=>{if(h)o[h]=r[i]}); return o;
+  });
+
+  const find=(o,names)=>{
+    const keys=Object.keys(o);
+    for(const n of names){
+      const k=keys.find(x=>x.toLowerCase().trim()===n.toLowerCase().trim());
+      if(k)return o[k];
     }
+    for(const n of names){
+      const k=keys.find(x=>x.toLowerCase().includes(n.toLowerCase()));
+      if(k)return o[k];
+    }
+    return "";
+  };
 
-    const trips = data.filter(x =>
-      String(x[companyIdField] || '').trim().toLowerCase() === company
-    );
+  const safe=trips.map(t=>({
+    "KTC Rq Num":find(t,["KTC Rq Num","KTC Request"]),
+    "GUEST COMPANY":find(t,["GUEST COMPANY","COMPANY"]),
+    "GUEST MOBILE":find(t,["GUEST MOBILE","MOBILE"]),
+    "TRIP TYPE":find(t,["TRIP TYPE"]),
+    "CAR":find(t,["CAR"]),
+    "DRIVER":find(t,["DRIVER"]),
+    "Start Date":find(t,["Start Date"]),
+    "Start Time":find(t,["Start Time"]),
+    "Start KM":find(t,["Start KM"]),
+    "End Date":find(t,["End Date"]),
+    "End Time":find(t,["End Time"]),
+    "End KM":find(t,["End KM"]),
+    "Actual KM":find(t,["Actual KM"]),
+    "Toll":find(t,["Toll"]),
+    "Parking":find(t,["Parking"]),
+    "Trip Description":find(t,["Trip Description"])
+  }));
 
-    const companyName = trips.length && companyNameField
-      ? String(trips[0][companyNameField] || company)
-      : company;
-
-    // Public/company-safe fields only.
-    const safeTrips = trips.map(x => ({
-      'Start Date/Time': x['Start Date/Time'],
-      'End Date/Time': x['End Date/Time'],
-      'KTC Request': x['KTC Request'],
-      'Trip Type': x['Trip Type'],
-      'Car': x['Car'],
-      'Driver': x['Driver'],
-      'Actual KM': x['Actual KM'],
-      'Trip Description': x['Trip Description']
-    }));
-
-    return json({companyName, trips: safeTrips});
-  }
-
-  return json(data);
+  return json({company:"KTC",totalTrips:safe.length,trips:safe});
 }
 
-function json(obj) {
-  return ContentService
-    .createTextOutput(JSON.stringify(obj))
+function json(data){
+  return ContentService.createTextOutput(JSON.stringify(data))
     .setMimeType(ContentService.MimeType.JSON);
 }
