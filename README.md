@@ -1,4 +1,4 @@
-# KTC Travels Dashboard
+# SRT — SHREE RAM TRAVELS Dashboard
 
 Two-part public/private dashboard architecture.
 
@@ -18,3 +18,20 @@ Sheet: TRIP DETAILS
 4. Upload this folder to GitHub Pages.
 
 IMPORTANT: The supplied API is a prototype. Do not expose sensitive financial data through an unauthenticated public endpoint. Production financial access should use Google-account authentication or a protected backend.
+
+## Corporate Partner Portal
+
+`company.html` is for companies that have a business tie-up with SRT and send trips to SRT for fulfilment.
+
+Each company should have a unique Company ID / Code. The portal calls the Apps Script API with that identifier and receives only that company's trip records.
+
+Recommended sheet field:
+- `Company ID` — unique company code
+- `Company Name` — company display name
+
+Do not expose `Rate`, `Total Amount`, internal cost, profit, driver salary, or other management-only fields in this portal.
+
+Example:
+`company.html?company=ABC001`
+
+For stronger security, production access should use an authenticated company account or a secure token rather than relying only on a URL parameter.

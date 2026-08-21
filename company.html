@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SRT — SHREE RAM TRAVELS | Corporate Partner</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">SRT <span>SHREE RAM TRAVELS</span></div>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="vendor.html">Vendor</a>
+    <a href="driver.html">Driver</a>
+    <a href="customer.html">Customer</a>
+  </nav>
+</header>
+
+<main class="page">
+  <div class="badge">CORPORATE PARTNER VIEW</div>
+  <h1 id="companyName">Company Trip Portal</h1>
+  <p>View only the trips and operational information belonging to your company.</p>
+
+  <div class="toolbar">
+    <input id="companyId" placeholder="Enter Company ID / Code">
+    <button onclick="loadCompanyTrips()">View Trips</button>
+  </div>
+
+  <section class="kpis">
+    <div class="kpi"><span>Total Trips</span><strong id="cTrips">—</strong></div>
+    <div class="kpi"><span>Total Actual KM</span><strong id="cKm">—</strong></div>
+    <div class="kpi"><span>Completed Trips</span><strong id="cCompleted">—</strong></div>
+    <div class="kpi"><span>Latest Trip</span><strong id="cLatest">—</strong></div>
+  </section>
+
+  <section class="table-card">
+    <h2>Trip Details</h2>
+    <p class="small">Financial rates, internal costs and management information are intentionally hidden.</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Request</th>
+            <th>Trip Type</th>
+            <th>Vehicle</th>
+            <th>Driver</th>
+            <th>Start</th>
+            <th>End</th>
+            <th>Actual KM</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody id="companyBody">
+          <tr><td colspan="9">Enter your Company ID / Code to load trips.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<footer>SRT — SHREE RAM TRAVELS • Corporate Partner Portal</footer>
+
+<script>
+const API_URL = ""; // Put your Apps Script /exec URL here after deployment.
+
+function n(v){ return typeof v === "number" ? v : Number(String(v ?? "").replace(/[^0-9.-]/g,"")) || 0; }
+
+function loadCompanyTrips(){
+  const id = document.getElementById("companyId").value.trim();
+  if(!id){ alert("Enter your Company ID / Code."); return; }
+  if(!API_URL){ alert("Apps Script API URL is not connected yet."); return; }
+
+  fetch(API_URL + "?view=company&company=" + encodeURIComponent(id))
+    .then(r => r.json())
+    .then(data => {
+      if(data.error) throw new Error(data.error);
+      document.getElementById("companyName").textContent = (data.companyName || id) + " — Trip Portal";
+
+      const rows = Array.isArray(data.trips) ? data.trips : [];
+      let km = 0;
+      rows.forEach(x => km += n(x["Actual KM"]));
+
+      document.getElementById("cTrips").textContent = rows.length.toLocaleString();
+      document.getElementById("cKm").textContent = km.toLocaleString("en-IN",{maximumFractionDigits:0});
+      document.getElementById("cCompleted").textContent = rows.length.toLocaleString();
+
+      const latest = rows.length ? (rows[0]["Start Date/Time"] || "—") : "—";
+      document.getElementById("cLatest").textContent = latest;
+
+      const body = document.getElementById("companyBody");
+      body.innerHTML = "";
+      if(!rows.length){
+        body.innerHTML = '<tr><td colspan="9">No trips found for this Company ID.</td></tr>';
+        return;
+      }
+
+      rows.forEach(x => {
+        const tr = document.createElement("tr");
+        [
+          "Start Date/Time","KTC Request","Trip Type","Car","Driver",
+          "Start Date/Time","End Date/Time","Actual KM","Trip Description"
+        ].forEach(k => {
+          const td = document.createElement("td");
+          td.textContent = x[k] ?? "";
+          tr.appendChild(td);
+        });
+        body.appendChild(tr);
+      });
+    })
+    .catch(e => alert("Unable to load company trips: " + e.message));
+}
+</script>
+</body>
+</html>
