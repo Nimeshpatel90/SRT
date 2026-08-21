@@ -1,106 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>SRT — SHREE RAM TRAVELS | KTC Portal</title>
-<link rel="stylesheet" href="css/style.css">
-<style>
-body{margin:0;font-family:Arial;background:#f5f7fa;color:#18202a}.topbar{display:flex;justify-content:space-between;padding:16px 24px;background:#183b63;color:#fff}.brand{font-size:22px;font-weight:700}.brand span{font-size:13px;font-weight:400;margin-left:8px}.topbar a{color:#fff;text-decoration:none;margin-left:15px}.page{max-width:1700px;margin:auto;padding:25px}.hero{text-align:center}.badge{display:inline-block;padding:7px 13px;border-radius:20px;background:#eaf0f7;color:#183b63;font-weight:bold;font-size:12px}.filters{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr auto;gap:10px;background:#fff;padding:18px;border-radius:16px;margin:20px 0}.filters input,.filters select,.filters button{padding:11px;border:1px solid #d8dee6;border-radius:8px}.filters button{background:#183b63;color:#fff}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin-bottom:20px}.card{background:#fff;border:1px solid #e5eaf0;border-radius:16px;padding:20px}.card span{color:#657184;font-size:13px}.card strong{display:block;font-size:25px;margin-top:8px}.table-card{background:#fff;border-radius:16px;overflow:hidden;border:1px solid #e5eaf0}.heading{padding:20px}.wrap{overflow:auto}table{border-collapse:collapse;width:100%;min-width:1600px}th,td{padding:11px 12px;border-bottom:1px solid #edf0f4;text-align:left;white-space:nowrap}th{background:#f7f9fc;cursor:pointer;position:sticky;top:0}.loading,.nodata{text-align:center;padding:30px;color:#657184}.updated{text-align:right;padding:0 20px 12px;font-size:12px;color:#7b8796}.notice{margin-top:20px;padding:18px;background:#eef3f8;border-radius:12px}@media(max-width:1000px){.filters{grid-template-columns:1fr 1fr}.summary{grid-template-columns:1fr 1fr}}@media(max-width:600px){.topbar{flex-direction:column}.filters{grid-template-columns:1fr}.page{padding:12px}}
-</style>
-</head>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SRT | KTC Corporate Portal</title><link rel="stylesheet" href="css/style.css"></head>
 <body>
-<header class="topbar"><div class="brand">SRT <span>SHREE RAM TRAVELS</span></div><nav><a href="index.html">Home</a><a href="vendor.html">Vendor</a><a href="driver.html">Driver</a><a href="customer.html">Customer</a></nav></header>
-<main class="page">
-<div class="hero"><div class="badge">CORPORATE PARTNER • KTC</div><h1>KTC — Corporate Trip Portal</h1><p>Live KTC trip information from SRT.</p></div>
-
-<section class="filters">
-<input id="search" placeholder="Search Request / Guest / Mobile / Driver / Vehicle">
-<select id="type"><option value="">All Trip Types</option></select>
-<select id="driver"><option value="">All Drivers</option></select>
-<select id="car"><option value="">All Vehicles</option></select>
-<input id="date" type="date">
-<button onclick="resetAll()">Reset</button>
-</section>
-
-<section class="summary">
-<div class="card"><span>Total Trips</span><strong id="trips">0</strong></div>
-<div class="card"><span>Actual KM</span><strong id="km">0</strong></div>
-<div class="card"><span>Total Toll</span><strong id="toll">₹0</strong></div>
-<div class="card"><span>Total Parking</span><strong id="parking">₹0</strong></div>
-</section>
-
-<section class="table-card">
-<div class="heading"><h2>KTC Trip Details</h2><button onclick="load()">🔄 Refresh Data</button></div>
-<div id="loading" class="loading">Loading KTC trip data...</div>
-<div id="updated" class="updated"></div>
-<div class="wrap"><table id="tbl"><thead><tr>
-<th data-k="Start Date">Start Date</th><th data-k="Start Time">Start Time</th><th data-k="KTC Rq Num">Request</th><th data-k="GUEST COMPANY">Guest Company</th><th data-k="GUEST MOBILE">Mobile</th><th data-k="TRIP TYPE">Trip Type</th><th data-k="CAR">Vehicle</th><th data-k="DRIVER">Driver</th><th data-k="End Date">End Date</th><th data-k="End Time">End Time</th><th data-k="Start KM">Start KM</th><th data-k="End KM">End KM</th><th data-k="Actual KM">Actual KM</th><th data-k="Toll">Toll</th><th data-k="Parking">Parking</th><th data-k="Trip Description">Description</th>
-</tr></thead><tbody id="body"></tbody></table></div>
-</section>
-<div class="notice"><b>KTC visible:</b> Guest Company, Mobile, trip details, vehicle, driver, dates, times, KM, Toll and Parking. <b>SRT internal Rate/Amount/Profit are not sent by the API.</b></div>
-</main>
-<footer style="text-align:center;padding:25px">SRT — SHREE RAM TRAVELS • KTC Corporate Partner Portal</footer>
-
+<header class="topbar"><a class="brand" href="index.html"><img src="IMG/SRT LOGO.png" alt="SRT Logo"><span><b>SRT</b><small>SHREE RAM TRAVELS</small></span></a><nav><a href="index.html">Home</a><a class="active" href="company.html">Corporate</a><a href="vendor.html">Vendor</a><a href="driver.html">Driver</a><a href="customer.html">Customer</a></nav></header>
+<main class="page-shell">
+<section class="page-head"><div><div class="eyebrow"><span></span> CORPORATE PARTNER • KTC</div><h1>KTC Trip Portal</h1><p>Live operational trip information supplied by SRT for KTC.</p></div><button class="btn btn-primary" id="refreshBtn" onclick="loadKTCTrips()">↻ Refresh</button></section>
+<section class="kpis"><div class="kpi"><span>Total Trips</span><strong id="cTrips">—</strong><small>Loaded records</small></div><div class="kpi"><span>Actual KM</span><strong id="cKm">—</strong><small>Total completed distance</small></div><div class="kpi"><span>Toll</span><strong id="cToll">—</strong><small>Trip-related toll</small></div><div class="kpi"><span>Parking</span><strong id="cParking">—</strong><small>Trip-related parking</small></div></section>
+<section class="table-card"><div class="section-heading"><div><div class="eyebrow">LIVE DATA</div><h2>KTC Trip Details</h2><p>Financial rates, SRT margin and internal costs are never displayed.</p></div><div class="table-tools"><input id="searchBox" type="search" placeholder="Search trip, vehicle, driver…"><select id="typeFilter"><option value="">All trip types</option></select></div></div>
+<div class="status-line"><span class="status-pill"><i></i> Live connection</span><span id="lastUpdated">Not loaded</span></div>
+<div class="table-wrap"><table><thead><tr><th>Start Date</th><th>Start Time</th><th>Request</th><th>Guest Company</th><th>Mobile</th><th>Trip Type</th><th>Vehicle</th><th>Driver</th><th>End Date</th><th>End Time</th><th>Start KM</th><th>End KM</th><th>Actual KM</th><th>Toll</th><th>Parking</th><th>Description</th></tr></thead><tbody id="ktcBody"><tr><td colspan="16" class="empty">Press Refresh to load KTC trips.</td></tr></tbody></table></div></section>
+<div class="notice"><b>Visible to KTC</b><span>Guest company, guest mobile, trip date/time, vehicle, driver, KM, toll, parking and description.</span><b>Protected</b><span>SRT rate, amount, profit, internal cost and management-only financial information.</span></div>
+</main><footer>SRT — SHREE RAM TRAVELS <span>•</span> KTC Corporate Partner Portal</footer>
 <script>
-const API="https://script.google.com/macros/s/AKfycbybgbOi9o91Q77ujLQnb5NOYYT-Zs_OhJevqTxl6trv7omlDxn_yP2Td0UQ_GIilWtsBg/exec";
-let data=[],shown=[],sortKey="",dir=1;
-const fields=["Start Date","Start Time","KTC Rq Num","GUEST COMPANY","GUEST MOBILE","TRIP TYPE","CAR","DRIVER","End Date","End Time","Start KM","End KM","Actual KM","Toll","Parking","Trip Description"];
-
-function num(v){return Number(String(v??"").replace(/[^0-9.-]/g,""))||0}
-function money(v){return "₹"+num(v).toLocaleString("en-IN",{maximumFractionDigits:0})}
-function dateInput(v){const p=String(v||"").split(/[\/-]/);return p.length===3?(p[0].length===4?`${p[0]}-${p[1].padStart(2,"0")}-${p[2].padStart(2,"0")}`:`${p[2]}-${p[1].padStart(2,"0")}-${p[0].padStart(2,"0")}`):""}
-
-async function load(){
- document.getElementById("loading").style.display="block";
- try{
-  const r=await fetch(API+"?t="+Date.now(),{cache:"no-store"}), x=await r.json();
-  if(x.error)throw Error(x.error);
-  data=x.trips||[]; fill(); filter();
-  document.getElementById("updated").textContent="Last updated: "+new Date().toLocaleString();
- }catch(e){
-  document.getElementById("body").innerHTML=`<tr><td colspan="16" class="nodata">Failed to load: ${e.message}</td></tr>`;
- }finally{document.getElementById("loading").style.display="none"}
-}
-
-function fill(){
- [["type","TRIP TYPE"],["driver","DRIVER"],["car","CAR"]].forEach(([id,k])=>{
-  const el=document.getElementById(id), vals=[...new Set(data.map(x=>x[k]).filter(Boolean))].sort();
-  el.innerHTML='<option value="">All '+(id==="type"?"Trip Types":id==="driver"?"Drivers":"Vehicles")+'</option>';
-  vals.forEach(v=>el.innerHTML+=`<option>${v}</option>`);
- });
-}
-
-function filter(){
- const q=document.getElementById("search").value.toLowerCase(), t=document.getElementById("type").value,d=document.getElementById("driver").value,c=document.getElementById("car").value,dt=document.getElementById("date").value;
- shown=data.filter(x=>{
-  const text=[x["KTC Rq Num"],x["GUEST COMPANY"],x["GUEST MOBILE"],x["DRIVER"],x["CAR"],x["Trip Description"]].join(" ").toLowerCase();
-  return (!q||text.includes(q))&&(!t||x["TRIP TYPE"]===t)&&(!d||x["DRIVER"]===d)&&(!c||x["CAR"]===c)&&(!dt||dateInput(x["Start Date"])===dt);
- });
- if(sortKey)shown.sort((a,b)=>{
-  const numeric=["Start KM","End KM","Actual KM","Toll","Parking"].includes(sortKey);
-  return dir*(numeric?num(a[sortKey])-num(b[sortKey]):String(a[sortKey]||"").localeCompare(String(b[sortKey]||"")));
- });
- render();
-}
-
-function render(){
- const b=document.getElementById("body");b.innerHTML="";
- if(!shown.length){b.innerHTML='<tr><td colspan="16" class="nodata">No KTC trips found.</td></tr>'}
- shown.forEach(x=>{const tr=document.createElement("tr");fields.forEach(k=>{const td=document.createElement("td");td.textContent=["Toll","Parking"].includes(k)?money(x[k]):(x[k]||"-");tr.appendChild(td)});b.appendChild(tr)});
- let km=0,toll=0,parking=0;shown.forEach(x=>{km+=num(x["Actual KM"]);toll+=num(x["Toll"]);parking+=num(x["Parking"])});
- document.getElementById("trips").textContent=shown.length.toLocaleString();
- document.getElementById("km").textContent=km.toLocaleString("en-IN");
- document.getElementById("toll").textContent=money(toll);
- document.getElementById("parking").textContent=money(parking);
- document.querySelectorAll("#tbl th").forEach(th=>{th.textContent=th.dataset.label||th.textContent.replace(/[ ▲▼]$/,"");th.dataset.label=th.textContent;if(th.dataset.k===sortKey)th.textContent+=dir===1?" ▲":" ▼"});
-}
-
-function resetAll(){["search","date"].forEach(id=>document.getElementById(id).value="");["type","driver","car"].forEach(id=>document.getElementById(id).value="");sortKey="";dir=1;filter()}
-
-document.querySelectorAll("#tbl th").forEach(th=>th.onclick=()=>{const k=th.dataset.k;if(sortKey===k)dir*=-1;else{sortKey=k;dir=1}filter()});
-["search","type","driver","car","date"].forEach(id=>document.getElementById(id).addEventListener(id==="search"?"input":"change",filter));
-load();
-</script>
-</body>
-</html>
+const API_URL='https://script.google.com/macros/s/AKfycbybgbOi9o91Q77ujLQnb5NOYYT-Zs_OhJevqTxl6trv7omlDxn_yP2Td0UQ_GIilWtsBg/exec';
+let allRows=[];
+const num=v=>Number(String(v??'').replace(/[^0-9.-]/g,''))||0;
+const money=v=>'₹'+num(v).toLocaleString('en-IN',{maximumFractionDigits:0});
+const val=(r,...keys)=>{for(const k of keys){if(r[k]!==undefined&&r[k]!==null&&String(r[k]).trim()!=='')return r[k]}return '-'};
+function populateTypes(rows){const s=document.getElementById('typeFilter'), old=s.value; const types=[...new Set(rows.map(r=>val(r,'TRIP TYPE')).filter(x=>x!=='-'))].sort(); s.innerHTML='<option value="">All trip types</option>'+types.map(x=>`<option>${x}</option>`).join(''); if(types.includes(old))s.value=old;}
+function render(){const q=document.getElementById('searchBox').value.toLowerCase().trim(), type=document.getElementById('typeFilter').value; const rows=allRows.filter(r=>{const text=Object.values(r).join(' ').toLowerCase();return(!q||text.includes(q))&&(!type||val(r,'TRIP TYPE')===type)}); const body=document.getElementById('ktcBody'); if(!rows.length){body.innerHTML='<tr><td colspan="16" class="empty">No matching KTC trips found.</td></tr>';return} body.innerHTML=rows.map(r=>`<tr><td>${val(r,'Start Date')}</td><td>${val(r,'Start Time')}</td><td>${val(r,'KTC Rq Num','REQUEST')}</td><td>${val(r,'GUEST COMPANY')}</td><td>${val(r,'GUEST MOBILE')}</td><td><span class="type-chip">${val(r,'TRIP TYPE')}</span></td><td>${val(r,'CAR','VEHICLE')}</td><td>${val(r,'DRIVER')}</td><td>${val(r,'End Date')}</td><td>${val(r,'End Time')}</td><td>${val(r,'Start KM')}</td><td>${val(r,'End KM')}</td><td><b>${val(r,'Actual KM')}</b></td><td>${money(val(r,'Toll'))}</td><td>${money(val(r,'Parking'))}</td><td class="desc">${val(r,'Trip Description','DESCRIPTION')}</td></tr>`).join('');}
+async function loadKTCTrips(){const btn=document.getElementById('refreshBtn');btn.disabled=true;btn.textContent='↻ Loading…'; try{const response=await fetch(API_URL+'?view=corporate&partner=KTC&t='+Date.now(),{cache:'no-store'});const data=await response.json();if(data.error)throw new Error(data.error);allRows=Array.isArray(data.trips)?data.trips:[];let km=0,toll=0,parking=0;allRows.forEach(r=>{km+=num(r['Actual KM']);toll+=num(r['Toll']);parking+=num(r['Parking'])});document.getElementById('cTrips').textContent=allRows.length.toLocaleString('en-IN');document.getElementById('cKm').textContent=km.toLocaleString('en-IN');document.getElementById('cToll').textContent=money(toll);document.getElementById('cParking').textContent=money(parking);populateTypes(allRows);render();document.getElementById('lastUpdated').textContent='Updated '+new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});}catch(e){document.getElementById('ktcBody').innerHTML=`<tr><td colspan="16" class="empty error">Unable to load KTC trips: ${e.message}</td></tr>`}finally{btn.disabled=false;btn.textContent='↻ Refresh'}}
+document.getElementById('searchBox').addEventListener('input',render);document.getElementById('typeFilter').addEventListener('change',render);loadKTCTrips();
+</script></body></html>
